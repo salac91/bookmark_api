@@ -12,7 +12,7 @@ config :logger, level: :warn
 # Configure your database
 config :bookmark_api, BookmarkApi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "ubuntu",
+  username: "postgres",
   password: "password",
   database: "bookmark_api_test",
   hostname: "localhost",

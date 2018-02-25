@@ -37,7 +37,7 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :bookmark_api, BookmarkApi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "ubuntu",
+  username: "postgres",
   password: "password",
   database: "bookmark_api_dev",
   hostname: "localhost",

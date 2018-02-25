@@ -3,10 +3,14 @@ defmodule BookmarkApi.Api.V1.BookmarkController do
 
   alias BookmarkApi.Bookmark
   alias BookmarkApi.User
+  alias BookmarkApi.QueryFilter
+  alias BookmarkApi.UtilFunctions
 
-  def index(conn, %{"user_id" => user_id, "search_term" => search_term}) do
-    user = Repo.get!(User, user_id) |> Repo.preload([:bookmarks])
-    render(conn, "index.json", bookmarks: user.bookmarks)
+  def index(conn, params) do
+    bookmarks = Bookmark 
+                |> QueryFilter.filter(%Bookmark{}, params, [:url, :description, :user_id]) 
+                |> Repo.all
+    render(conn, "index.json", bookmarks: bookmarks)
   end
 
   def create(conn, %{"bookmark" => bookmark_params}) do
@@ -29,5 +33,11 @@ defmodule BookmarkApi.Api.V1.BookmarkController do
     Repo.delete!(bookmark)
 
     send_resp(conn, :no_content, "")
+  end
+
+  def count_a_char_in_url(conn, %{"id" => id}) do
+    bookmark = Repo.get!(Bookmark, id)
+
+    text(conn, UtilFunctions.count_char_in_string(bookmark.url, "a"))
   end
 end
