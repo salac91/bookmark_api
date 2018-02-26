@@ -4,7 +4,7 @@ defmodule BookmarkApi.Api.V1.BookmarkController do
   alias BookmarkApi.Bookmark
   alias BookmarkApi.User
   alias BookmarkApi.QueryFilter
-  alias BookmarkApi.UtilFunctions
+  alias BookmarkApi.Utils
 
   def index(conn, params) do
     bookmarks = Bookmark 
@@ -27,17 +27,20 @@ defmodule BookmarkApi.Api.V1.BookmarkController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    bookmark = Repo.get!(Bookmark, id)
+  def delete(conn, %{"id" => id, "user_id" => user_id}) do
+    bookmark = Bookmark |> Repo.get(id) |> Repo.preload(:user)
 
-    Repo.delete!(bookmark)
-
-    send_resp(conn, :no_content, "")
+    if bookmark.user.id == String.to_integer(user_id) do
+      Repo.delete!(bookmark)
+      send_resp(conn, :no_content, "Bookmark removed successfully")
+    else 
+      send_resp(conn, :not_found, "#{bookmark.user.id == user_id}Bookmark with that user_id doesn't exist!")
+    end
   end
 
   def count_a_char_in_url(conn, %{"id" => id}) do
     bookmark = Repo.get!(Bookmark, id)
 
-    text(conn, UtilFunctions.count_char_in_string(bookmark.url, "a"))
+    text(conn, Utils.count_char_in_string(bookmark.url, "a"))
   end
 end

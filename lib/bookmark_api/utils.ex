@@ -1,4 +1,4 @@
-defmodule BookmarkApi.UtilFunctions do
+defmodule BookmarkApi.Utils do
 	def count_char_in_string(string, char) do
     string
     |> String.graphemes
